@@ -1,7 +1,6 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { memo } from 'react';
 
 import {
   HomeScreen,
@@ -9,35 +8,24 @@ import {
   RegisterScreen,
   ForgotPasswordScreen,
   Dashboard,
+  Ranking
 } from './screens';
 
-// TODO carregar sessão do usuario
-// const getSessionUser = async () => {
-//   try {
-//     const value = await AsyncStorage.getItem('authToken')
-//     console.log("User: ", value)
-//     if(value !== null) {
-//       return value
-//     }
-//   } catch(e) {
-//     // error reading value
-//     console.log(e)
-//   }
-// }
+const Stack = createNativeStackNavigator();
 
-// getSessionUser()
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="HomeScreen" >
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Ranking" component={Ranking} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
-const Router = createStackNavigator({
-    HomeScreen,
-    LoginScreen,
-    RegisterScreen,
-    ForgotPasswordScreen,
-    Dashboard,
-  },
-  {
-    initialRouteName: 'HomeScreen',
-    headerMode: 'none',
-  }
-);
-
-export default createAppContainer(Router);
+export default memo(App);

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "React Native Paper Login Template",
-    "slug": "react-native-paper-login-template",
+    "name": "Hands On Libras",
+    "slug": "hands-on-libras-ap",
     "privacy": "public",
     "platforms": ["ios", "android", "web"],
     "version": "1.0.0",

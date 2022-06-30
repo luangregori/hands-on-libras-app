@@ -40,7 +40,6 @@ const LoginScreen = ({ navigation }: Props) => {
     } else {
       setPassword({ ...password, error: messages.wrongLogin });
     }
-
   };
 
   return (
