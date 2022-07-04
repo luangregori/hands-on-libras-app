@@ -1,20 +1,27 @@
 import React, { memo } from 'react';
-import { Card, IconButton, Avatar } from 'react-native-paper';
+import { Card, IconButton } from 'react-native-paper';
 import { StyleSheet, Image } from 'react-native';
 import { theme } from '../core/theme';
+import { Navigation } from '../types';
 
-const CardChallenge = (props) => {
-  const uri = props.uri
-  const id = props.id
+type Props = {
+  navigation: Navigation;
+  uri: string;
+  id: string
+  title: string
+  subtitle: string
+};
 
+const CardChallenge = ({ navigation, uri, id, title, subtitle  }: Props) => {
   const _goToStart = ()=> {
     console.log('go to start', id)
+    navigation.navigate('StartChallenge', { challengeId: id })
   }
   return (
     <Card.Title
       style={styles.card}
-      title={props.title}
-      subtitle={props.subtitle}
+      title={title}
+      subtitle={subtitle}
       leftStyle={styles.left}
       titleNumberOfLines={2}
       // left={(props) => <Avatar.Image {...props} source={{uri}}/>}

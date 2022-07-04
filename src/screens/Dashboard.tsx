@@ -65,6 +65,7 @@ const Dashboard = ({ navigation }: Props) => {
       <ScrollView style={styles.challenges}>
           { challenges.map((el: any) => 
             <CardChallenge 
+              navigation={navigation}
               key={el.id}
               id={el.id}
               title={el.name}
