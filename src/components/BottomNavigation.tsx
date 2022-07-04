@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 12,
     backgroundColor: theme.colors.surface,
-    height: 80,
+    height: 75,
     paddingLeft: 30,
     paddingRight: 30,
     padding: 3,
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: -17,
-    width: '105%',
+    bottom: -20,
+    width: '100%',
   },
   content:{
     alignItems: 'center',

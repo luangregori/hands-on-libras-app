@@ -29,7 +29,7 @@ const Dashboard = ({ navigation }: Props) => {
     if (categories.find(el => el.id === categoryId)?.name === 'Todos') {
       categoryId = undefined
     }
-    // chama rota que lista os desafios
+    
     const loadedChallenges = await loadChallengesApi()
 
     if (loadedChallenges) {
@@ -55,14 +55,14 @@ const Dashboard = ({ navigation }: Props) => {
               <Text style={styles.category_name}>{el.name.toUpperCase()}</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style= {{flexDirection: 'row', justifyContent: 'space-between',}} onPress={() => { /* go to ranking */ }}>
+          <TouchableOpacity style={styles.categories} onPress={() => { /* go to ranking */ }}>
               <IconButton style={{margin: -17}} size={30} icon="star" color={theme.colors.contrast}/>
               <Text style={styles.points}>225</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView>
+      <ScrollView style={styles.challenges}>
           { challenges.map((el: any) => 
             <CardChallenge 
               key={el.id}
@@ -82,12 +82,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
-    padding: 10,
-    paddingBottom: 80,
+    paddingBottom: 70,
     backgroundColor: theme.colors.background,
   },
   header: {
-    padding: 10,
+    paddingHorizontal: 15,
     marginBottom: 10,
     marginTop: -30,
   },
@@ -104,6 +103,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  challenges: {
+    paddingHorizontal: 10
   }
 });
 
