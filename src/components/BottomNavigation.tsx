@@ -18,7 +18,7 @@ const BottomNavigation = ({ navigation }: Props) => (
       <Avatar.Icon size={40} icon="medal" />
       <Text style={styles.text}>Classificação</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.content} onPress={() => {navigation.navigate('LoginScreen')}}>
+    <TouchableOpacity style={styles.content} onPress={() => {navigation.navigate('Profile')}}>
       <Avatar.Icon size={40} icon="account" />
       <Text style={styles.text}>Perfil</Text>
     </TouchableOpacity>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     height: 75,
     paddingLeft: 30,
     paddingRight: 30,
-    padding: 3,
+    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     position: 'absolute',

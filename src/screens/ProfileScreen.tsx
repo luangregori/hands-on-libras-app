@@ -4,29 +4,32 @@ import Header from '../components/Header';
 import BottomNavigation from '../components/BottomNavigation';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 type Props = {
   navigation: Navigation;
 };
 
-const Ranking = ({ navigation }: Props) => {
-  const [categories, setCategories] = useState([]);
+const Profile = ({ navigation }: Props) => {
+  const _logout = async () => {
+    await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.removeItem('expiresIn');
 
-  const range = ['semanal', 'mensal', 'anual']
+    console.log('logout success');
+
+    navigation.navigate('HomeScreen');
+  } 
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={theme.colors.backdrop} />
 
       <View style={styles.header}>
-        <Header>Classificação</Header>
-        <View style={styles.ranges}>
-          {range.map((el: any) =>
-            <TouchableOpacity key={el} onPress={() => { }}>
-              <Text style={styles.name}>{el.toUpperCase()}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        <Header>Perfil</Header>
       </View>
+
+      <TouchableOpacity onPress={_logout}>
+        <Text style={styles.label}>Sair</Text>
+      </TouchableOpacity>
 
       <BottomNavigation navigation={navigation}/>
     </SafeAreaView>
@@ -45,15 +48,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: -30,
   },
-  ranges: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  label: {
+    fontSize: 16,
+    color: theme.colors.error,
   },
-  name: {
-    marginRight: 15,
-    color: theme.colors.primary,
-  }
 });
 
 
-export default memo(Ranking);
+export default memo(Profile);
