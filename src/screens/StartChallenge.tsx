@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image} from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { loadCategoriesApi } from '../services/challenges';
+import { startChallengesApi } from '../services/challenges';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
@@ -13,24 +13,17 @@ type Props = {
 };
 
 const StartChallenge = ({ route, navigation }: Props) => {
-  const [challengeInfo, setchallengeInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
+  const [challengeInfo, setChallengeInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
   const { challengeId } = route.params;
 
   const _getChallengeInfo = async () => {
-    console.log('get challenge info', challengeId)
-    // const infos = await loadChallengeInfos(challengeId);
+    const infos = await startChallengesApi(challengeId);
 
-    // if (infos) {
-    //   setchallengeInfo(infos)
-    // }
+    console.log('infos', infos);
 
-    setchallengeInfo({  
-      "name": "Sinais básicos para Hospital",  
-      "description": "Neste curso você aprendera sinais básicos para conseguir se comunicar em um ambiente hospitalar",  
-      "image_url": "https://firebasestorage.googleapis.com/v0/b/hands-on-libras.appspot.com/o/challenges%2Fhospital.png?alt=media&token=c7e8d92d-f9e6-49f4-a140-e159e3b40615",  
-      "categoryId": "62b358a0e9d1321cd5ab221d",  
-      "id": "62c2e0fee9c98fcf990c2be4"
-    })
+    if (infos) {
+      setChallengeInfo(infos.challengeInfo)
+    }
   };
 
   useEffect(() => {
