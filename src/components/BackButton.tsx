@@ -4,7 +4,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 type Props = {
   goBack: () => void;
-  leftMargin: any
+  leftMargin?: any
 };
 
 const BackButton = ({ goBack, leftMargin }: Props) => (

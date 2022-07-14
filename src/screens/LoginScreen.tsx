@@ -34,8 +34,14 @@ const LoginScreen = ({ navigation }: Props) => {
     const user = await loginApi(email.value, password.value)
 
     if (user.accessToken) {
-      const jsonValue = JSON.stringify(user.accessToken)
-      await AsyncStorage.setItem('authToken', jsonValue)
+      const accessTokenValue = JSON.stringify(user.accessToken)
+      await AsyncStorage.setItem('authToken', accessTokenValue)
+
+      const expirationValue = JSON.stringify(new Date().getTime() + (user.expiresIn * 1000))
+      await AsyncStorage.setItem('expiresIn', expirationValue)
+
+      console.log('expiresIn', expirationValue)
+
       navigation.navigate('Dashboard');
     } else {
       setPassword({ ...password, error: messages.wrongLogin });

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-axios.defaults.baseURL = 'http://192.168.18.4:5000'
+axios.defaults.baseURL = 'https://hands-on-libras-api.herokuapp.com'
 
 const apiInstance = axios.create()
 

@@ -18,7 +18,8 @@ const HomeScreen = ({ navigation }: Props) => {
 
   const _hasSessionToken = async () => {
     const token = await AsyncStorage.getItem('authToken')
-    if (token) {
+    const expiresIn = await AsyncStorage.getItem('expiresIn')
+    if (token && Number(expiresIn) > new Date().getTime()) {
       navigation.navigate('Dashboard')
     }
   }

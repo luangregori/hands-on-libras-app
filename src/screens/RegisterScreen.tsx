@@ -45,8 +45,12 @@ const RegisterScreen = ({ navigation }: Props) => {
     const user = await signUpApi(name.value, email.value, password.value, passwordConfirmation.value)
 
     if (user.accessToken) {
-      const jsonValue = JSON.stringify(user.accessToken)
-      await AsyncStorage.setItem('authToken', jsonValue)
+      const accessTokenValue = JSON.stringify(user.accessToken)
+      await AsyncStorage.setItem('authToken', accessTokenValue)
+
+      const expirationValue = JSON.stringify(new Date().getTime() + (user.expiresIn * 1000))
+      await AsyncStorage.setItem('expiresIn', expirationValue)
+      
       navigation.navigate('Dashboard');
       return
     } 
