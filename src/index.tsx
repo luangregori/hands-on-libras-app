@@ -10,7 +10,8 @@ import {
   Dashboard,
   Ranking,
   StartChallenge,
-  Profile
+  Profile,
+  LearnChallenge
 } from './screens';
 
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,7 @@ const App = () => {
         <Stack.Screen name="Ranking" component={Ranking} />
         <Stack.Screen name="StartChallenge" component={StartChallenge} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="LearnChallenge" component={LearnChallenge} />
       </Stack.Navigator>
     </NavigationContainer>
   );

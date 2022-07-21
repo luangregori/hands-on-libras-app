@@ -19,8 +19,6 @@ const StartChallenge = ({ route, navigation }: Props) => {
   const _getChallengeInfo = async () => {
     const infos = await startChallengesApi(challengeId);
 
-    console.log('infos', infos);
-
     if (infos) {
       setChallengeInfo(infos.challengeInfo)
     }
@@ -49,7 +47,7 @@ const StartChallenge = ({ route, navigation }: Props) => {
       
       <View style={styles.buttons}>
         <Button mode="contained" 
-          onPress={() => navigation.navigate('LoginScreen')}>
+          onPress={() => navigation.navigate('LearnChallenge', { challengeId })}>
           Aprender
         </Button>
         <Button mode="contained"
