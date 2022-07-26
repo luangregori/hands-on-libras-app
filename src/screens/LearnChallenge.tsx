@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
@@ -8,7 +8,6 @@ import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
 
 import { WebView } from 'react-native-webview';
-
 
 type Props = {
   navigation: Navigation;
@@ -21,6 +20,8 @@ interface LearningInfo {
   word: string;
 }
 
+let webViewRef;
+
 const LearnChallenge = ({ route, navigation }: Props) => {
   const [learningInfo, setLearningInfo] = useState([]);
   const [stepId, setStepId] = useState('0');
@@ -30,21 +31,22 @@ const LearnChallenge = ({ route, navigation }: Props) => {
     // const infos = await LearnChallengesApi(challengeId);
 
     const infos: Array<LearningInfo> = [
-      { id: '0dfsdf', description: 'Descrição da palavra 0', word: 'Palavra' },
-      { id: '1edfgdgd', description: 'Descrição da palavra 1', word: 'Palavra' },
-      { id: '2fdsfsd', description: 'Descrição da palavra 2', word: 'Palavra' },
-      { id: '3f433', description: 'Descrição da palavra 3', word: 'Palavra' },
-      { id: '4gfdfgdf', description: 'Descrição da palavra 4', word: 'Palavra' },
+      { id: '0dfsdf', description: 'Aprendendo a palavra Olá', word: 'OLÁ' },
+      { id: '1edfgdgd', description: 'Aprendendo a palavra Médico', word: 'Médico' },
+      { id: '2fdsfsd', description: 'Aprendendo a palavra oi', word: 'oi' },
+      { id: '3f433', description: 'Aprendendo a palavra beijo', word: 'beijo' },
+      { id: '4gfdfgdf', description: 'Aprendendo a palavra dor', word: 'dor' },
     ]
 
-    await setLearningInfo(infos)
-    await setStepId(infos[0].id)
+    await setLearningInfo(infos);
+    await setStepId(infos[0].id);
   };
 
   const _nextStep = async () => {
     const stepIndex = getStepIndex()
     const nextStep = learningInfo[stepIndex + 1]
     await setStepId(nextStep.id)
+    playWord(nextStep.word);
   };
 
   const _hasNextStep = () => {
@@ -54,6 +56,10 @@ const LearnChallenge = ({ route, navigation }: Props) => {
 
   const getStepIndex = (): number => {
     return learningInfo.findIndex(val => val.id === stepId)
+  }
+
+  const playWord = (word: string) => {
+    webViewRef.injectJavaScript(`window.player.play('${word}')`);
   }
 
   useEffect(() => {
@@ -69,9 +75,15 @@ const LearnChallenge = ({ route, navigation }: Props) => {
 
       <View style={styles.avatar}>
         <WebView
-          // TODO: usar url do avatar do VLibras
-          // source={{ uri: 'http://192.168.18.4:3000' }}
-          source={{ uri: 'https://expo.dev' }}
+          style={{ marginLeft: "-50%" }}
+          width={'200%'}
+          onMessage={(event) => {
+            if (event.nativeEvent.data === "PLAYER_LOADED") {
+              playWord(learningInfo.find(val => val.id === stepId)?.word)
+            }
+          }}
+          ref={(ref) => webViewRef = ref}
+          source={{ uri: 'https://hands-on-libras.web.app/?cc=true' }}
         />
       </View>
 
@@ -82,7 +94,7 @@ const LearnChallenge = ({ route, navigation }: Props) => {
       </View>
 
       <View style={styles.buttons}>
-        { _hasNextStep() ?
+        {_hasNextStep() ?
           <Button mode="contained" onPress={_nextStep}>
             Proximo
           </Button>
@@ -107,6 +119,8 @@ const styles = StyleSheet.create({
   avatar: {
     height: '50%',
     marginHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: 'red',
   },
   description: {
