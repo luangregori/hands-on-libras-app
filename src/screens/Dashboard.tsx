@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, StatusBar, SafeAreaView} from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
 import Header from '../components/Header';
 import CardChallenge from "../components/CardChallenge";
 import BottomNavigation from '../components/BottomNavigation';
@@ -16,6 +16,7 @@ type Props = {
 const Dashboard = ({ navigation }: Props) => {
   const [categories, setCategories] = useState([]);
   const [challenges, setChallenges] = useState([]);
+  const [loadingChallenges, setLoadingChallenges] = useState(false);
 
   const _getCategories = async () => {
     const allCategories = await loadCategoriesApi()
@@ -26,55 +27,60 @@ const Dashboard = ({ navigation }: Props) => {
   };
 
   const _getChallengesFromCategory = async (categoryId?: string) => {
+    setLoadingChallenges(true);
     if (categories.find(el => el.id === categoryId)?.name === 'Todos') {
       categoryId = undefined
     }
-    
-    const loadedChallenges = await loadChallengesApi()
 
-    if (loadedChallenges) {
-      setChallenges(loadedChallenges)
-    }
+    const loadedChallenges = await loadChallengesApi(categoryId)
+
+    setChallenges(loadedChallenges)
+    setLoadingChallenges(false);
+
   };
 
   useEffect(() => {
-		_getCategories();
+    _getCategories();
     _getChallengesFromCategory();
-	}, []);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
 
-      <StatusBar backgroundColor={theme.colors.backdrop}/>
+      <StatusBar backgroundColor={theme.colors.backdrop} />
 
       <View style={styles.header}>
         <Header>Desafios</Header>
         <View style={styles.categories}>
-          { categories.map((el: any) => 
+          {categories.map((el: any) =>
             <TouchableOpacity key={el.id} onPress={() => _getChallengesFromCategory(el.id)}>
               <Text style={styles.category_name}>{el.name.toUpperCase()}</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.categories} onPress={() => { /* go to ranking */ }}>
-              <IconButton style={{margin: -17}} size={30} icon="star" color={theme.colors.contrast}/>
-              <Text style={styles.points}>225</Text>
+          <TouchableOpacity style={styles.categories} onPress={() => { navigation.navigate('Ranking') }}>
+            <IconButton style={{ margin: -17 }} size={30} icon="star" color={theme.colors.contrast} />
+            <Text style={styles.points}>225</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView style={styles.challenges}>
-          { challenges.map((el: any) => 
-            <CardChallenge 
+        {loadingChallenges ? (
+          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingChallenges}/>
+        ) : (
+          challenges.map((el: any) =>
+            <CardChallenge
               navigation={navigation}
               key={el.id}
               id={el.id}
               title={el.name}
               subtitle={el.description}
-              uri={el.image_url}/>
-          )}
+              uri={el.image_url} />
+          )
+        )}
       </ScrollView>
 
-      <BottomNavigation navigation={navigation}/>
+      <BottomNavigation navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  category_name : {
+  category_name: {
     marginRight: 15,
     color: theme.colors.primary,
   },
@@ -104,6 +110,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  loadingChallenges:{
+    marginTop: 20,
   },
   challenges: {
     paddingHorizontal: 10
