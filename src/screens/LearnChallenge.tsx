@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { learnChallengesApi } from '../services/challenges';
+import { learnChallengesApi, completeLearnApi } from '../services/challenges';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
@@ -112,8 +112,10 @@ const LearnChallenge = ({ route, navigation }: Props) => {
           Desafio concluído com sucesso!!
         </Paragraph>
         <Button mode="contained"
-          // TODO: chamar rota que vai dar pontos por concluir o aprendizado
-          onPress={() => navigation.navigate('Dashboard')}>
+          onPress={() => {
+            completeLearnApi(challengeId)
+            navigation.navigate('StartChallenge', { challengeId })
+          }}>
           Finalizar
         </Button>
       </View>

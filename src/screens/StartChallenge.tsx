@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image} from 'react-native';
+import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
 import { startChallengesApi } from '../services/challenges';
@@ -14,6 +14,7 @@ type Props = {
 
 const StartChallenge = ({ route, navigation }: Props) => {
   const [challengeInfo, setChallengeInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
+  const [userInfo, setUserInfo] = useState({ account: '', challengeId: '', status: ' ', id: '' });
   const { challengeId } = route.params;
 
   const _getChallengeInfo = async () => {
@@ -21,21 +22,29 @@ const StartChallenge = ({ route, navigation }: Props) => {
 
     if (infos) {
       setChallengeInfo(infos.challengeInfo)
+      setUserInfo(infos.userInfo)
     }
   };
 
   useEffect(() => {
-		_getChallengeInfo();
-	}, []);
+    _getChallengeInfo();
+
+    const listener = navigation.addListener('focus', () => {
+      _getChallengeInfo()
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return listener;
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
 
-      <StatusBar backgroundColor={theme.colors.backdrop}/>
+      <StatusBar backgroundColor={theme.colors.backdrop} />
 
-      <Image style={styles.image} source={{uri: challengeInfo.image_url}}/>
+      <Image style={styles.image} source={{ uri: challengeInfo.image_url }} />
 
-      <BackButton leftMargin={{left: 15}} goBack={() => navigation.navigate('Dashboard')} />
+      <BackButton leftMargin={{ left: 15 }} goBack={() => navigation.navigate('Dashboard')} />
 
       <Text style={styles.title}>{challengeInfo.name}</Text>
 
@@ -44,16 +53,23 @@ const StartChallenge = ({ route, navigation }: Props) => {
           {challengeInfo.description}
         </Paragraph>
       </View>
-      
+
       <View style={styles.buttons}>
-        <Button mode="contained" 
+        <Button mode="contained"
           onPress={() => navigation.navigate('LearnChallenge', { challengeId })}>
           Aprender
         </Button>
-        <Button mode="contained"
-          onPress={() => navigation.navigate('RegisterScreen')}>
-          Desafio
-        </Button>
+
+        {userInfo.status !== 'started' ?
+          <Button mode="contained"
+            onPress={() => navigation.navigate('RegisterScreen')}>
+            Desafio
+          </Button> :
+          <Button mode="outlined">
+            Desafio
+          </Button>
+        }
+
       </View>
 
 
@@ -72,14 +88,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 300,
   },
-  title:{
+  title: {
     fontSize: 26,
     color: theme.colors.primary,
     fontWeight: 'bold',
     paddingVertical: 20,
     alignSelf: 'center',
   },
-  description:{
+  description: {
     marginTop: 20,
     marginHorizontal: 40,
   },

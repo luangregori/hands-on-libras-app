@@ -19,10 +19,11 @@ const Dashboard = ({ navigation }: Props) => {
   const [loadingChallenges, setLoadingChallenges] = useState(false);
 
   const _getCategories = async () => {
-    const allCategories = await loadCategoriesApi()
+    let allCategories = await loadCategoriesApi()
 
     if (allCategories) {
-      setCategories(allCategories.reverse())
+      if (allCategories[0].name !== 'Todos') allCategories = allCategories.reverse()
+      setCategories(allCategories)
     }
   };
 
@@ -66,7 +67,7 @@ const Dashboard = ({ navigation }: Props) => {
 
       <ScrollView style={styles.challenges}>
         {loadingChallenges ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingChallenges}/>
+          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingChallenges} />
         ) : (
           challenges.map((el: any) =>
             <CardChallenge
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 10,
   },
-  loadingChallenges:{
+  loadingChallenges: {
     marginTop: 20,
   },
   challenges: {
