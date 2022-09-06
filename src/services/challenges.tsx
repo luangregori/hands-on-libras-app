@@ -44,3 +44,18 @@ export async function startChallengesApi(challengeId: string) {
 		}
 	}
 }
+
+export async function learnChallengesApi(challengeId: string) {
+	try {
+		console.log('Learn challenge...', challengeId);
+		const response = await api.post('/api/challenge/learn', { challengeId });
+		console.log('Challenge learn successfully!');
+		return response.data
+
+	} catch (error) {
+		console.log('Error learn challenge!', error);
+		if (error.response.status > 200 && error.response.status < 500){
+			return error.response.data
+		}
+	}
+}

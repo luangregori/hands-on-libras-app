@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { startChallengesApi } from '../services/challenges';
+import { learnChallengesApi } from '../services/challenges';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
@@ -29,15 +29,7 @@ const LearnChallenge = ({ route, navigation }: Props) => {
   const { challengeId } = route.params;
 
   const _getLearningInfo = async () => {
-    // const infos = await LearnChallengesApi(challengeId);
-
-    const infos: Array<LearningInfo> = [
-      { id: '0dfsdf', description: 'Aprendendo a palavra Olá', word: 'OLÁ' },
-      { id: '1edfgdgd', description: 'Aprendendo a palavra Médico', word: 'Médico' },
-      { id: '2fdsfsd', description: 'Aprendendo a palavra oi', word: 'oi' },
-      { id: '3f433', description: 'Aprendendo a palavra beijo', word: 'beijo' },
-      { id: '4gfdfgdf', description: 'Aprendendo a palavra dor', word: 'dor' },
-    ]
+    const infos = await learnChallengesApi(challengeId);
 
     await setLearningInfo(infos);
     await setStepId(infos[0].id);

@@ -22,7 +22,7 @@ const Dashboard = ({ navigation }: Props) => {
     const allCategories = await loadCategoriesApi()
 
     if (allCategories) {
-      setCategories(allCategories)
+      setCategories(allCategories.reverse())
     }
   };
 
