@@ -27,8 +27,6 @@ const StartChallenge = ({ route, navigation }: Props) => {
   };
 
   useEffect(() => {
-    _getChallengeInfo();
-
     const listener = navigation.addListener('focus', () => {
       _getChallengeInfo()
     });
