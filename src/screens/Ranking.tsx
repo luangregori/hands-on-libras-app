@@ -1,17 +1,34 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, StatusBar, ActivityIndicator, ScrollView } from 'react-native';
 import Header from '../components/Header';
 import BottomNavigation from '../components/BottomNavigation';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
+import RankingElement from '../components/RankingElement';
+import { loadRankingApi } from '../services/ranking';
+
 type Props = {
   navigation: Navigation;
 };
 
 const Ranking = ({ navigation }: Props) => {
-  const [categories, setCategories] = useState([]);
+  const [ranking, setRanking] = useState([{ position: 0, name: '', score: 0 }]);
+  const [loadingRanking, setLoadingRanking] = useState(false);
 
-  const range = ['semanal', 'mensal', 'anual']
+  const ranges = [{ name: 'semanal', days: 7 }, { name: 'mensal', days: 30 }, { name: 'anual', days: 365 }]
+
+  const _getRanking = async (days: number) => {
+    setLoadingRanking(true);
+
+    const loadedRanking = await loadRankingApi(days)
+
+    setRanking(loadedRanking)
+    setLoadingRanking(false);
+  };
+
+  useEffect(() => {
+    _getRanking(7);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,15 +37,23 @@ const Ranking = ({ navigation }: Props) => {
       <View style={styles.header}>
         <Header>Classificação</Header>
         <View style={styles.ranges}>
-          {range.map((el: any) =>
-            <TouchableOpacity key={el} onPress={() => { }}>
-              <Text style={styles.name}>{el.toUpperCase()}</Text>
+          {ranges.map((el: any) =>
+            <TouchableOpacity key={el.days} onPress={() => {_getRanking(el.days) }}>
+              <Text style={styles.name}>{el.name.toUpperCase()}</Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      <BottomNavigation navigation={navigation}/>
+      <ScrollView style={styles.ranking}>
+        {loadingRanking ? (
+          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingRanking} />
+        ) : (
+          <RankingElement items={ranking} />
+        )}
+      </ScrollView>
+
+      <BottomNavigation navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -52,6 +77,12 @@ const styles = StyleSheet.create({
   name: {
     marginRight: 15,
     color: theme.colors.primary,
+  },
+  loadingRanking: {
+    marginTop: 20,
+  },
+  ranking: {
+    paddingHorizontal: 10
   }
 });
 
