@@ -8,6 +8,7 @@ import { theme } from '../core/theme';
 import { loadCategoriesApi, loadChallengesApi } from '../services/challenges';
 import { IconButton } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
+import { loadScoreApi } from '../services/score';
 
 type Props = {
   navigation: Navigation;
@@ -17,6 +18,7 @@ const Dashboard = ({ navigation }: Props) => {
   const [categories, setCategories] = useState([]);
   const [challenges, setChallenges] = useState([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
+  const [score, setScore] = useState(0);
 
   const _getCategories = async () => {
     let allCategories = await loadCategoriesApi()
@@ -40,10 +42,21 @@ const Dashboard = ({ navigation }: Props) => {
 
   };
 
+  const _getScore = async () => {
+    let score = await loadScoreApi()
+    setScore(score)
+  };
+
   useEffect(() => {
     _getCategories();
     _getChallengesFromCategory();
-  }, []);
+    
+    const listener = navigation.addListener('focus', () => {
+      _getScore();
+    });
+
+    return listener;
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +73,7 @@ const Dashboard = ({ navigation }: Props) => {
           )}
           <TouchableOpacity style={styles.categories} onPress={() => { navigation.navigate('Ranking') }}>
             <IconButton style={{ margin: -17 }} size={30} icon="star" color={theme.colors.contrast} />
-            <Text style={styles.points}>225</Text>
+            <Text style={styles.points}>{score}</Text>
           </TouchableOpacity>
         </View>
       </View>
