@@ -109,7 +109,7 @@ const LearnChallenge = ({ route, navigation }: Props) => {
       <View style={styles.content}>
         <Image style={styles.image} source={require('../assets/learn-completed-successfully.png')}/>
         <Paragraph>
-          Desafio concluído com sucesso!!
+          Aprendizado concluído com sucesso!!
         </Paragraph>
         <Button mode="contained"
           onPress={() => {

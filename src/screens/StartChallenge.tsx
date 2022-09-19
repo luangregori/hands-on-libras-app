@@ -60,7 +60,7 @@ const StartChallenge = ({ route, navigation }: Props) => {
 
         {userInfo.status !== 'started' ?
           <Button mode="contained"
-            onPress={() => navigation.navigate('RegisterScreen')}>
+            onPress={() => navigation.navigate('TestChallenge', { challengeId })}>
             Desafio
           </Button> :
           <Button mode="outlined">
