@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-na
 import { ProgressBar, IconButton } from 'react-native-paper';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { testChallengeApi } from '../services/challenges';
+import { completeTestApi, testChallengeApi } from '../services/challenges';
 import Button from '../components/Button';
 import Paragraph from '../components/Paragraph';
 
@@ -50,7 +50,7 @@ const TestChallenge = ({ route, navigation }: Props) => {
       setCompleted(true);
       return
     }
-    
+
     if (stepIndex < testQuestions.length - 1) {
       const nextStep = testQuestions[stepIndex + 1]
       await setStepId(nextStep.id);
@@ -111,9 +111,9 @@ const TestChallenge = ({ route, navigation }: Props) => {
         </View>
 
         <View style={styles.buttons}>
-          {options.map((question: any) => (
+          {options.map((question: string) => (
             <Button
-              key={question.id}
+              key={question.toString()}
               mode="contained"
               onPress={() => { _nextStep(question) }}
             >
@@ -134,9 +134,8 @@ const TestChallenge = ({ route, navigation }: Props) => {
           Desafio concluído com sucesso!!
         </Paragraph>
         <Button mode="contained"
-          onPress={() => {
-            // TODO: complete test challenge
-            // completeLearnApi(challengeId)
+          onPress={async () => {
+            await completeTestApi(challengeId, lives.toString())
             navigation.navigate('StartChallenge', { challengeId })
           }}>
           Finalizar

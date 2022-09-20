@@ -77,58 +77,26 @@ export async function completeLearnApi(challengeId: string) {
 
 export async function testChallengeApi(challengeId: string) {
 	try {
-		return [
-			{
-				"word": "médico",
-				"options": [
-					"a",
-					"b",
-					"c",
-					"médico"
-				],
-				"challengeId": "62be058113d1b934ce217af2",
-				"id": "63289add0cba39a13d0af736"
-			},
-			{
-				"word": "dor",
-				"options": [
-					"dor",
-					"a",
-					"b",
-					"c"
-				],
-				"challengeId": "62be058113d1b934ce217af2",
-				"id": "63289add0cba39a13d0af737"
-			},
-			{
-				"word": "ajuda",
-				"options": [
-					"a",
-					"b",
-					"ajuda",
-					"c"
-				],
-				"challengeId": "62be058113d1b934ce217af2",
-				"id": "63289add0cba39a13d0af738"
-			},
-			{
-				"word": "enfermeira",
-				"options": [
-					"a",
-					"enfermeira",
-					"b",
-					"c"
-				],
-				"challengeId": "62be058113d1b934ce217af2",
-				"id": "63289add0cba39a13d0af739"
-			}
-		]
 		console.log('Test challenge...', challengeId);
 		const response = await api.post('/api/challenge/test', { challengeId });
 		console.log('Test challenge loaded successfully!');
 		return response.data
 	} catch (error) {
 		console.log('Error to test challenge!', error);
+		if (error.response.status > 200 && error.response.status < 500){
+			return error.response.data
+		}
+	}
+}
+
+export async function completeTestApi(challengeId: string, lives: string) {
+	try {
+		console.log('Complete Test...', challengeId);
+		const response = await api.post('/api/challenge/test/complete', { challengeId, lives });
+		console.log('Complete Test successfully!');
+		return response.data
+	} catch (error) {
+		console.log('Error to Complete Test!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}
