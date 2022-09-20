@@ -14,7 +14,7 @@ type Props = {
 
 const StartChallenge = ({ route, navigation }: Props) => {
   const [challengeInfo, setChallengeInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
-  const [userInfo, setUserInfo] = useState({ account: '', challengeId: '', status: ' ', id: '' });
+  const [userInfo, setUserInfo] = useState({ accountId: '', challengeId: '', status: ' ', id: '', score: '' });
   const { challengeId } = route.params;
 
   const _getChallengeInfo = async () => {
@@ -50,6 +50,7 @@ const StartChallenge = ({ route, navigation }: Props) => {
         <Paragraph>
           {challengeInfo.description}
         </Paragraph>
+        {userInfo.score ? <Text style={styles.score}>Pontuação: {userInfo.score}</Text> : null}
       </View>
 
       <View style={styles.buttons}>
@@ -96,6 +97,11 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 20,
     marginHorizontal: 40,
+  },
+  score: {
+    color: theme.colors.secondary,
+    fontWeight: 'bold',
+    alignSelf: 'center'
   },
   buttons: {
     marginTop: 70,
