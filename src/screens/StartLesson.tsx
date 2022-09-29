@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { startChallengesApi } from '../services/challenges';
+import { startLessonApi } from '../services/lessons';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
@@ -12,16 +12,16 @@ type Props = {
   route: Route;
 };
 
-const StartChallenge = ({ route, navigation }: Props) => {
-  const [challengeInfo, setChallengeInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
-  const [userInfo, setUserInfo] = useState({ account: '', challengeId: '', status: ' ', id: '' });
-  const { challengeId } = route.params;
+const StartLesson = ({ route, navigation }: Props) => {
+  const [lessonInfo, setLessonInfo] = useState({ name: '', description: '', image_url: ' ', categoryId: '', id: '' });
+  const [userInfo, setUserInfo] = useState({ accountId: '', lessonId: '', status: ' ', id: '', score: '' });
+  const { lessonId } = route.params;
 
   const _getChallengeInfo = async () => {
-    const infos = await startChallengesApi(challengeId);
+    const infos = await startLessonApi(lessonId);
 
     if (infos) {
-      setChallengeInfo(infos.challengeInfo)
+      setLessonInfo(infos.lessonInfo)
       setUserInfo(infos.userInfo)
     }
   };
@@ -40,27 +40,28 @@ const StartChallenge = ({ route, navigation }: Props) => {
 
       <StatusBar backgroundColor={theme.colors.backdrop} />
 
-      <Image style={styles.image} source={{ uri: challengeInfo.image_url }} />
+      <Image style={styles.image} source={{ uri: lessonInfo.image_url }} />
 
       <BackButton leftMargin={{ left: 15 }} goBack={() => navigation.navigate('Dashboard')} />
 
-      <Text style={styles.title}>{challengeInfo.name}</Text>
+      <Text style={styles.title}>{lessonInfo.name}</Text>
 
       <View style={styles.description}>
         <Paragraph>
-          {challengeInfo.description}
+          {lessonInfo.description}
         </Paragraph>
+        {userInfo.score ? <Text style={styles.score}>Pontuação: {userInfo.score}</Text> : null}
       </View>
 
       <View style={styles.buttons}>
         <Button mode="contained"
-          onPress={() => navigation.navigate('LearnChallenge', { challengeId })}>
+          onPress={() => navigation.navigate('LearnLesson', { lessonId })}>
           Aprender
         </Button>
 
         {userInfo.status !== 'started' ?
           <Button mode="contained"
-            onPress={() => navigation.navigate('RegisterScreen')}>
+            onPress={() => navigation.navigate('ChallengeLesson', { lessonId })}>
             Desafio
           </Button> :
           <Button mode="outlined">
@@ -97,6 +98,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 40,
   },
+  score: {
+    color: theme.colors.secondary,
+    fontWeight: 'bold',
+    alignSelf: 'center'
+  },
   buttons: {
     marginTop: 70,
     paddingHorizontal: 40,
@@ -104,4 +110,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default memo(StartChallenge);
+export default memo(StartLesson);

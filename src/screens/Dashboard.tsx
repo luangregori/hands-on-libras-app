@@ -5,7 +5,7 @@ import CardChallenge from "../components/CardChallenge";
 import BottomNavigation from '../components/BottomNavigation';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
-import { loadCategoriesApi, loadChallengesApi } from '../services/challenges';
+import { loadCategoriesApi, loadLessonsApi } from '../services/lessons';
 import { IconButton } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { loadScoreApi } from '../services/score';
@@ -35,7 +35,7 @@ const Dashboard = ({ navigation }: Props) => {
       categoryId = undefined
     }
 
-    const loadedChallenges = await loadChallengesApi(categoryId)
+    const loadedChallenges = await loadLessonsApi(categoryId)
 
     setChallenges(loadedChallenges)
     setLoadingChallenges(false);

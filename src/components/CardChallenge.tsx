@@ -15,7 +15,7 @@ type Props = {
 const CardChallenge = ({ navigation, uri, id, title, subtitle  }: Props) => {
   const _goToStart = ()=> {
     console.log('go to start', id)
-    navigation.navigate('StartChallenge', { challengeId: id })
+    navigation.navigate('StartLesson', { lessonId: id })
   }
   return (
     <Card.Title
