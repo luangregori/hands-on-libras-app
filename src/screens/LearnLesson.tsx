@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { learnChallengesApi, completeLearnApi } from '../services/challenges';
+import { learnLessonApi, completeLearnApi } from '../services/lessons';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
 import Paragraph from '../components/Paragraph';
@@ -22,14 +22,14 @@ interface LearningInfo {
 
 let webViewRef;
 
-const LearnChallenge = ({ route, navigation }: Props) => {
+const LearnLesson = ({ route, navigation }: Props) => {
   const [learningInfo, setLearningInfo] = useState([]);
   const [stepId, setStepId] = useState('0');
   const [completed, setCompleted] = useState(false);
-  const { challengeId } = route.params;
+  const { lessonId } = route.params;
 
   const _getLearningInfo = async () => {
-    const infos = await learnChallengesApi(challengeId);
+    const infos = await learnLessonApi(lessonId);
 
     await setLearningInfo(infos);
     await setStepId(infos[0].id);
@@ -113,8 +113,8 @@ const LearnChallenge = ({ route, navigation }: Props) => {
         </Paragraph>
         <Button mode="contained"
           onPress={() => {
-            completeLearnApi(challengeId)
-            navigation.navigate('StartChallenge', { challengeId })
+            completeLearnApi(lessonId)
+            navigation.navigate('StartLesson', { lessonId })
           }}>
           Finalizar
         </Button>
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default memo(LearnChallenge);
+export default memo(LearnLesson);

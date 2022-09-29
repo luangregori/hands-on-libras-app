@@ -15,55 +15,55 @@ export async function loadCategoriesApi() {
 	}
 }
 
-export async function loadChallengesApi(categoryId?: string) {
+export async function loadLessonsApi(categoryId?: string) {
 	try {
-		console.log('Loading challenges...');
-		const response = await api.post('/api/challenges', { categoryId });
+		console.log('Loading lessons...');
+		const response = await api.post('/api/lessons', { categoryId });
 		console.log('Challenges loaded successfully!');
 		return response.data
 
 	} catch (error) {
-		console.log('Error loading challenges!', error);
+		console.log('Error loading lessons!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}
 	}
 }
 
-export async function startChallengesApi(challengeId: string) {
+export async function startLessonApi(lessonId: string) {
 	try {
-		console.log('Start challenge...', challengeId);
-		const response = await api.post('/api/challenge/start', { challengeId });
+		console.log('Start lesson...', lessonId);
+		const response = await api.post('/api/lesson/start', { lessonId });
 		console.log('Challenge start successfully!');
 		return response.data
 
 	} catch (error) {
-		console.log('Error start challenge!', error);
+		console.log('Error start lesson!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}
 	}
 }
 
-export async function learnChallengesApi(challengeId: string) {
+export async function learnLessonApi(lessonId: string) {
 	try {
-		console.log('Learn challenge...', challengeId);
-		const response = await api.post('/api/challenge/learn', { challengeId });
+		console.log('Learn lesson...', lessonId);
+		const response = await api.post('/api/lesson/learn', { lessonId });
 		console.log('Challenge learn successfully!');
 		return response.data
 
 	} catch (error) {
-		console.log('Error learn challenge!', error);
+		console.log('Error learn lesson!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}
 	}
 }
 
-export async function completeLearnApi(challengeId: string) {
+export async function completeLearnApi(lessonId: string) {
 	try {
-		console.log('Complete learn...', challengeId);
-		const response = await api.post('/api/challenge/learn/complete', { challengeId });
+		console.log('Complete learn...', lessonId);
+		const response = await api.post('/api/lesson/learn/complete', { lessonId });
 		console.log('Complete learn successfully!');
 		return response.data
 
@@ -75,28 +75,28 @@ export async function completeLearnApi(challengeId: string) {
 	}
 }
 
-export async function testChallengeApi(challengeId: string) {
+export async function challengeLessonApi(lessonId: string) {
 	try {
-		console.log('Test challenge...', challengeId);
-		const response = await api.post('/api/challenge/test', { challengeId });
-		console.log('Test challenge loaded successfully!');
+		console.log('Challenge Lesson...', lessonId);
+		const response = await api.post('/api/lesson/challenge', { lessonId });
+		console.log('Challenge Lesson loaded successfully!');
 		return response.data
 	} catch (error) {
-		console.log('Error to test challenge!', error);
+		console.log('Error to Challenge Lesson!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}
 	}
 }
 
-export async function completeTestApi(challengeId: string, lives: string) {
+export async function completeChallengeApi(lessonId: string, lives: string) {
 	try {
-		console.log('Complete Test...', challengeId);
-		const response = await api.post('/api/challenge/test/complete', { challengeId, lives });
-		console.log('Complete Test successfully!');
+		console.log('Complete challenge...', lessonId);
+		const response = await api.post('/api/lesson/challenge/complete', { lessonId, lives });
+		console.log('Complete challenge successfully!');
 		return response.data
 	} catch (error) {
-		console.log('Error to Complete Test!', error);
+		console.log('Error to Complete challenge!', error);
 		if (error.response.status > 200 && error.response.status < 500){
 			return error.response.data
 		}

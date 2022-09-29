@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-na
 import { ProgressBar, IconButton } from 'react-native-paper';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
-import { completeTestApi, testChallengeApi } from '../services/challenges';
+import { completeChallengeApi, challengeLessonApi } from '../services/lessons';
 import Button from '../components/Button';
 import Paragraph from '../components/Paragraph';
 
@@ -22,17 +22,17 @@ interface TestQuestion {
 
 let webViewRef;
 
-const TestChallenge = ({ route, navigation }: Props) => {
+const ChallengeLesson = ({ route, navigation }: Props) => {
   const [testQuestions, setTestQuestions] = useState([]);
   const [stepId, setStepId] = useState('0');
   const [options, setOptions] = useState([]);
   const [completed, setCompleted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [lives, setLives] = useState(3);
-  const { challengeId } = route.params;
+  const { lessonId } = route.params;
 
   const _getQuestions = async () => {
-    const infos = await testChallengeApi(challengeId);
+    const infos = await challengeLessonApi(lessonId);
 
     await setTestQuestions(infos);
     await setStepId(infos[0].id);
@@ -135,8 +135,8 @@ const TestChallenge = ({ route, navigation }: Props) => {
         </Paragraph>
         <Button mode="contained"
           onPress={async () => {
-            await completeTestApi(challengeId, lives.toString())
-            navigation.navigate('StartChallenge', { challengeId })
+            await completeChallengeApi(lessonId, lives.toString())
+            navigation.navigate('StartLesson', { lessonId })
           }}>
           Finalizar
         </Button>
@@ -197,4 +197,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default memo(TestChallenge);
+export default memo(ChallengeLesson);

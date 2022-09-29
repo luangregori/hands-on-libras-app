@@ -9,10 +9,10 @@ import {
   ForgotPasswordScreen,
   Dashboard,
   Ranking,
-  StartChallenge,
+  StartLesson,
   Profile,
-  LearnChallenge,
-  TestChallenge
+  LearnLesson,
+  ChallengeLesson
 } from './screens';
 
 const Stack = createNativeStackNavigator();
@@ -27,10 +27,10 @@ const App = () => {
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="Ranking" component={Ranking} />
-        <Stack.Screen name="StartChallenge" component={StartChallenge} />
+        <Stack.Screen name="StartLesson" component={StartLesson} />
         <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="LearnChallenge" component={LearnChallenge} />
-        <Stack.Screen name="TestChallenge" component={TestChallenge} />
+        <Stack.Screen name="LearnLesson" component={LearnLesson} />
+        <Stack.Screen name="ChallengeLesson" component={ChallengeLesson} />
       </Stack.Navigator>
     </NavigationContainer>
   );
