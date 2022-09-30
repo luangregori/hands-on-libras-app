@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
@@ -20,6 +20,7 @@ type Props = {
 const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  const [loading, setLoading] = useState(false);
 
   const _onLoginPressed = async () => {
     const emailError = emailValidator(email.value);
@@ -30,7 +31,8 @@ const LoginScreen = ({ navigation }: Props) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    
+    setLoading(true);
+
     const user = await loginApi(email.value, password.value)
 
     if (user.accessToken) {
@@ -41,6 +43,7 @@ const LoginScreen = ({ navigation }: Props) => {
       await AsyncStorage.setItem('expiresIn', expirationValue)
 
       console.log('expiresIn', expirationValue)
+      setLoading(false);
 
       navigation.navigate('Dashboard');
     } else {
@@ -85,6 +88,10 @@ const LoginScreen = ({ navigation }: Props) => {
           <Text style={styles.label}>Esqueçeu sua senha?</Text>
         </TouchableOpacity>
       </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      ) : null}
 
       <Button mode="contained" onPress={_onLoginPressed}>
         Login
