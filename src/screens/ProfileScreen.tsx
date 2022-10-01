@@ -1,10 +1,13 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker"
 import { loadUserApi } from '../services/user';
+import { firebase } from '../services/firebase'
+
 type Props = {
   navigation: Navigation;
 };
@@ -17,12 +20,15 @@ const Profile = ({ navigation }: Props) => {
     image_url: '',
     achievements: [],
   })
+  const [image, setImage] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   const _loadUserInfo = async () => {
     let infos = await loadUserApi()
 
     if (infos) {
       setUserInfo(infos)
+      setImage(infos.image_url)
     }
   };
 
@@ -33,6 +39,54 @@ const Profile = ({ navigation }: Props) => {
     console.log('logout success');
 
     navigation.navigate('HomeScreen');
+  }
+
+  const updateImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All, 
+      allowsEditing: true,
+      quality: 1,  
+    }) as any;
+
+    if (!result.cancelled) {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', result.uri, true);
+        xhr.send(null);
+      }) as any;
+      console.log('blob', blob)
+  
+      const ref = firebase.storage().ref().child(`/accounts/${userInfo.id}/profile.png`);
+      const snapshot = ref.put(blob)
+  
+      snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+        () => {
+          setUploading(true)
+        },
+        (error) => {
+          setUploading(false)
+          console.log('error', error)
+          blob.close()
+          return
+        },
+        () => {
+          snapshot.snapshot.ref.getDownloadURL().then((url) => {
+            setUploading(false)
+            console.log("Download URL: ", url)
+            setImage(result.uri)
+            blob.close()
+            return url
+          })
+        }
+      )
+    }
   }
 
   useEffect(() => {
@@ -49,24 +103,31 @@ const Profile = ({ navigation }: Props) => {
 
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
-            {userInfo.image_url ?
-              <Image source={{ uri: userInfo.image_url }} style={styles.image} resizeMode="cover"></Image> :
+            {image ?
+              <Image source={{ uri: image }} style={styles.image} resizeMode="cover"></Image> :
               <Image source={require("../assets/profile.png")} style={styles.image} resizeMode="center"></Image>
             }
           </View>
+
+          <TouchableOpacity style={styles.add} onPress={updateImage}>
+            {uploading ?
+              <ActivityIndicator size="large" color={theme.colors.primary} /> :
+              <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ marginTop: 6, marginLeft: 2 }}></Ionicons>
+            }
+          </TouchableOpacity>
         </View>
 
 
-        {/* <View style={styles.statsContainer}>
+        <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-          <Text style={[styles.text, { fontSize: 24 }]}>2°</Text>
-          <Text style={[styles.text, styles.subText]}>Classificação</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>2°</Text>
+            <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-          <Text style={[styles.text, { fontSize: 24 }]}>250</Text>
-          <Text style={[styles.text, styles.subText]}>Pontuação</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>250</Text>
+            <Text style={[styles.text, styles.subText]}>Pontuação</Text>
           </View>
-        </View> */}
+        </View>
         <View style={styles.infoContainer}>
           <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Nome</Text>
           <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{userInfo.name}</Text>
@@ -127,6 +188,17 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     overflow: "hidden",
     backgroundColor: theme.colors.surface
+  },
+  add: {
+    backgroundColor: "#41444B",
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center"
   },
   infoContainer: {
     alignSelf: "center",
