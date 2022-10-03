@@ -18,6 +18,10 @@ const BottomNavigation = ({ navigation }: Props) => (
       <Avatar.Icon size={40} icon="medal" />
       <Text style={styles.text}>Classificação</Text>
     </TouchableOpacity>
+    <TouchableOpacity style={styles.content} onPress={() => {navigation.navigate('Dictionary')}}>
+      <Avatar.Icon size={40} icon="book-alphabet" />
+      <Text style={styles.text}>Dicionario</Text>
+    </TouchableOpacity>
     <TouchableOpacity style={styles.content} onPress={() => {navigation.navigate('Profile')}}>
       <Avatar.Icon size={40} icon="account" />
       <Text style={styles.text}>Perfil</Text>
