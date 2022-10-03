@@ -5,7 +5,7 @@ import { theme } from '../core/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"
-import { loadUserApi } from '../services/user';
+import { loadUserApi, updateUserApi } from '../services/user';
 import { firebase } from '../services/firebase'
 
 type Props = {
@@ -21,14 +21,16 @@ const Profile = ({ navigation }: Props) => {
     achievements: [],
   })
   const [image, setImage] = useState(null)
+  const [userScore, setUserScore] = useState(0)
   const [uploading, setUploading] = useState(false)
 
   const _loadUserInfo = async () => {
     let infos = await loadUserApi()
 
     if (infos) {
-      setUserInfo(infos)
-      setImage(infos.image_url)
+      setUserInfo(infos.userInfo)
+      setUserScore(infos.userScore)
+      setImage(infos.userInfo.image_url)
     }
   };
 
@@ -43,9 +45,9 @@ const Profile = ({ navigation }: Props) => {
 
   const updateImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All, 
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      quality: 1,  
+      quality: 1,
     }) as any;
 
     if (!result.cancelled) {
@@ -62,10 +64,10 @@ const Profile = ({ navigation }: Props) => {
         xhr.send(null);
       }) as any;
       console.log('blob', blob)
-  
+
       const ref = firebase.storage().ref().child(`/accounts/${userInfo.id}/profile.png`);
       const snapshot = ref.put(blob)
-  
+
       snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
         () => {
           setUploading(true)
@@ -81,6 +83,7 @@ const Profile = ({ navigation }: Props) => {
             setUploading(false)
             console.log("Download URL: ", url)
             setImage(result.uri)
+            updateUserApi({ image_url: url })
             blob.close()
             return url
           })
@@ -120,11 +123,12 @@ const Profile = ({ navigation }: Props) => {
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>2°</Text>
+            {/* // TODO: buscar classificação atual */}
+            <Text style={[styles.text, { fontSize: 24 }]}>X°</Text>
             <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-            <Text style={[styles.text, { fontSize: 24 }]}>250</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{userScore}</Text>
             <Text style={[styles.text, styles.subText]}>Pontuação</Text>
           </View>
         </View>
