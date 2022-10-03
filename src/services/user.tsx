@@ -28,3 +28,33 @@ export async function signUpApi(name: string, email: string, password: string, p
 		}
 	}
 }
+
+export async function loadUserApi() {
+	try {
+		console.log('Loading user info...');
+		const response = await api.post('/api/user-info');
+		console.log('User Info loaded successfully!');
+		return response.data;
+
+	} catch (error) {
+		console.log('Error Loading user info!', error);
+		if (error.response.status > 200 && error.response.status < 500){
+			return error.response.data
+		}
+	}
+}
+
+export async function updateUserApi(params: {name?: string, email?: string, newPassword?: string, oldPassword?: string, image_url?: string}) {
+	try {
+		console.log('Update user info...', params.image_url);
+		const response = await api.post('/api/update-user-info', params);
+		console.log('User Info updated successfully!');
+		return response.data;
+
+	} catch (error) {
+		console.log('Error Update user info!', error);
+		if (error.response.status > 200 && error.response.status < 500){
+			return error.response.data
+		}
+	}
+}

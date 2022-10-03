@@ -1,16 +1,39 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from 'react-native';
-import Header from '../components/Header';
-import BottomNavigation from '../components/BottomNavigation';
+import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker"
+import { loadUserApi, updateUserApi } from '../services/user';
+import { firebase } from '../services/firebase'
+
 type Props = {
   navigation: Navigation;
 };
 
 const Profile = ({ navigation }: Props) => {
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    id: '',
+    image_url: '',
+    achievements: [],
+  })
+  const [image, setImage] = useState(null)
+  const [userScore, setUserScore] = useState(0)
+  const [uploading, setUploading] = useState(false)
+
+  const _loadUserInfo = async () => {
+    let infos = await loadUserApi()
+
+    if (infos) {
+      setUserInfo(infos.userInfo)
+      setUserScore(infos.userScore)
+      setImage(infos.userInfo.image_url)
+    }
+  };
+
   const _logout = async () => {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('expiresIn');
@@ -19,6 +42,60 @@ const Profile = ({ navigation }: Props) => {
 
     navigation.navigate('HomeScreen');
   }
+
+  const updateImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+    }) as any;
+
+    if (!result.cancelled) {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', result.uri, true);
+        xhr.send(null);
+      }) as any;
+      console.log('blob', blob)
+
+      const ref = firebase.storage().ref().child(`/accounts/${userInfo.id}/profile.png`);
+      const snapshot = ref.put(blob)
+
+      snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+        () => {
+          setUploading(true)
+        },
+        (error) => {
+          setUploading(false)
+          console.log('error', error)
+          blob.close()
+          return
+        },
+        () => {
+          snapshot.snapshot.ref.getDownloadURL().then((url) => {
+            setUploading(false)
+            console.log("Download URL: ", url)
+            setImage(result.uri)
+            updateUserApi({ image_url: url })
+            blob.close()
+            return url
+          })
+        }
+      )
+    }
+  }
+
+  useEffect(() => {
+    _loadUserInfo();
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,44 +106,51 @@ const Profile = ({ navigation }: Props) => {
 
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
-            <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
+            {image ?
+              <Image source={{ uri: image }} style={styles.image} resizeMode="cover"></Image> :
+              <Image source={require("../assets/profile.png")} style={styles.image} resizeMode="center"></Image>
+            }
           </View>
+
+          <TouchableOpacity style={styles.add} onPress={updateImage}>
+            {uploading ?
+              <ActivityIndicator size="large" color={theme.colors.primary} /> :
+              <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ marginTop: 6, marginLeft: 2 }}></Ionicons>
+            }
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.infoContainer}>
-          <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Julie</Text>
-        </View>
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>2°</Text>
+            {/* // TODO: buscar classificação atual */}
+            <Text style={[styles.text, { fontSize: 24 }]}>X°</Text>
             <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-            <Text style={[styles.text, { fontSize: 24 }]}>250</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{userScore}</Text>
             <Text style={[styles.text, styles.subText]}>Pontuação</Text>
           </View>
         </View>
+        <View style={styles.infoContainer}>
+          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Nome</Text>
+          <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{userInfo.name}</Text>
+          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Email</Text>
+          <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{userInfo.email}</Text>
+        </View>
 
-        <Text style={[styles.subText, styles.recent]}>Conquistas</Text>
         <View style={{ alignItems: "center" }}>
-          <View style={styles.recentItem}>
-            <View style={styles.activityIndicator}></View>
-            <View style={{ width: 250 }}>
-              <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                Started following <Text style={{ fontWeight: "400" }}>Jake Challeahe</Text> and <Text style={{ fontWeight: "400" }}>Luis Poteer</Text>
-              </Text>
+          {userInfo.achievements.map((achievement, index) => (
+            <View key={index} style={styles.recentItem}>
+              {/* <View style={styles.activityIndicator}></View> */}
+              <Ionicons name="trophy" size={24} style={styles.activityIndicator} color={theme.colors.primary}></Ionicons>
+              <View style={{ width: 250 }}>
+                <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
+                  <Text style={{ fontWeight: "400" }}>{achievement}</Text>
+                </Text>
+              </View>
             </View>
-          </View>
-
-          <View style={styles.recentItem}>
-            <View style={styles.activityIndicator}></View>
-            <View style={{ width: 250 }}>
-              <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                Started following <Text style={{ fontWeight: "400" }}>Luke Harper</Text>
-              </Text>
-            </View>
-          </View>
+          ))}
 
           <TouchableOpacity onPress={_logout}>
             <Text style={styles.logout}>Sair</Text>
@@ -106,12 +190,25 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    overflow: "hidden"
+    overflow: "hidden",
+    backgroundColor: theme.colors.surface
+  },
+  add: {
+    backgroundColor: "#41444B",
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center"
   },
   infoContainer: {
     alignSelf: "center",
     alignItems: "center",
-    marginTop: 16
+    marginTop: 16,
+    marginBottom: 32
   },
   statsContainer: {
     flexDirection: "row",
@@ -131,16 +228,11 @@ const styles = StyleSheet.create({
   recentItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 16
+    marginVertical: 16
   },
   activityIndicator: {
-    backgroundColor: "#CABFAB",
-    padding: 4,
-    height: 12,
-    width: 12,
-    borderRadius: 6,
-    marginTop: 3,
-    marginRight: 20
+    marginTop: -3,
+    marginRight: 10
   },
   logout: {
     fontSize: 16,

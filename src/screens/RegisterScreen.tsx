@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
@@ -27,6 +27,7 @@ const RegisterScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [passwordConfirmation, setPasswordConfirmation] = useState({ value: '', error: '' });
+  const [loading, setLoading] = useState(false);
 
   const _onSignUpPressed = async () => {
     const nameError = nameValidator(name.value);
@@ -42,6 +43,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       return;
     }
 
+    setLoading(true);
     const user = await signUpApi(name.value, email.value, password.value, passwordConfirmation.value)
 
     if (user.accessToken) {
@@ -50,16 +52,17 @@ const RegisterScreen = ({ navigation }: Props) => {
 
       const expirationValue = JSON.stringify(new Date().getTime() + (user.expiresIn * 1000))
       await AsyncStorage.setItem('expiresIn', expirationValue)
-      
+
+      setLoading(false);
       navigation.navigate('Dashboard');
       return
-    } 
+    }
     if (user.error) {
-      if (user.error.includes("already registered")){
+      if (user.error.includes("already registered")) {
         setEmail({ ...email, error: messages.emailInUse });
       }
 
-      if (user.error.includes("passwordConfirmation")){
+      if (user.error.includes("passwordConfirmation")) {
         setPassword({ ...password, error: messages.divergentPasswords });
         setPasswordConfirmation({ ...passwordConfirmation, error: messages.divergentPasswords });
       }
@@ -114,6 +117,10 @@ const RegisterScreen = ({ navigation }: Props) => {
         errorText={passwordConfirmation.error}
         secureTextEntry
       />
+
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      ) : null}
 
       <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
         Cadastre-se
