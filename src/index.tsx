@@ -12,7 +12,8 @@ import {
   StartLesson,
   Profile,
   LearnLesson,
-  ChallengeLesson
+  ChallengeLesson,
+  Dictionary
 } from './screens';
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,7 @@ const App = () => {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="LearnLesson" component={LearnLesson} />
         <Stack.Screen name="ChallengeLesson" component={ChallengeLesson} />
+        <Stack.Screen name="Dictionary" component={Dictionary} />
       </Stack.Navigator>
     </NavigationContainer>
   );
