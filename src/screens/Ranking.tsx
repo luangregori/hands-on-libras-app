@@ -6,6 +6,7 @@ import { Navigation } from '../types';
 import { theme } from '../core/theme';
 import RankingElement from '../components/RankingElement';
 import { loadRankingApi } from '../services/ranking';
+import Leaderboard from 'react-native-leaderboard';
 
 type Props = {
   navigation: Navigation;
@@ -20,7 +21,9 @@ const Ranking = ({ navigation }: Props) => {
   const _getRanking = async (days: number) => {
     setLoadingRanking(true);
 
-    const loadedRanking = await loadRankingApi(days)
+    let loadedRanking = await loadRankingApi(days)
+
+    loadedRanking = loadedRanking.map(el => Object.assign(el, { image_url: "https://firebasestorage.googleapis.com/v0/b/hands-on-libras.appspot.com/o/accounts%2F62d01c57b0d4f50016d50207%2Fprofile.png?alt=media&token=0f9a7df8-35f4-4e6c-908b-60c34839aacd" }))
 
     setRanking(loadedRanking)
     setLoadingRanking(false);
@@ -38,20 +41,28 @@ const Ranking = ({ navigation }: Props) => {
         <Header>Classificação</Header>
         <View style={styles.ranges}>
           {ranges.map((el: any) =>
-            <TouchableOpacity key={el.days} onPress={() => {_getRanking(el.days) }}>
+            <TouchableOpacity key={el.days} onPress={() => { _getRanking(el.days) }}>
               <Text style={styles.name}>{el.name.toUpperCase()}</Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      <ScrollView style={styles.ranking}>
+      {/* <ScrollView style={styles.ranking}>
         {loadingRanking ? (
           <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingRanking} />
         ) : (
           <RankingElement items={ranking} />
         )}
-      </ScrollView>
+      </ScrollView> */}
+      <View style={styles.ranking}>
+        <Text style={styles.title}>Placar Geral</Text>
+        <Leaderboard
+          data={ranking}
+          sortBy='score'
+          labelBy='name'
+          icon='image_url' />
+      </View>
 
       <BottomNavigation navigation={navigation} />
     </SafeAreaView>
@@ -73,6 +84,13 @@ const styles = StyleSheet.create({
   ranges: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: 22,
+    color: theme.colors.primary,
+    fontWeight: 'bold',
+    paddingVertical: 14,
+    alignSelf: 'center',
   },
   name: {
     marginRight: 15,
