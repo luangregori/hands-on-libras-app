@@ -22,6 +22,7 @@ const Profile = ({ navigation }: Props) => {
   })
   const [image, setImage] = useState(null)
   const [userScore, setUserScore] = useState(0)
+  const [userRank, setUserRank] = useState('X')
   const [uploading, setUploading] = useState(false)
 
   const _loadUserInfo = async () => {
@@ -30,6 +31,7 @@ const Profile = ({ navigation }: Props) => {
     if (infos) {
       setUserInfo(infos.userInfo)
       setUserScore(infos.userScore)
+      setUserRank(infos.userPosition)
       setImage(infos.userInfo.image_url)
     }
   };
@@ -124,7 +126,7 @@ const Profile = ({ navigation }: Props) => {
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
             {/* // TODO: buscar classificação atual */}
-            <Text style={[styles.text, { fontSize: 24 }]}>X°</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{userRank}°</Text>
             <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
