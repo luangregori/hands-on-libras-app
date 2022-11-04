@@ -6,9 +6,9 @@ import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
 import filter from "lodash.filter";
 import words from '../constants/words'
+import { useBetween } from 'use-between';
 
 import { WebView } from 'react-native-webview';
-import BottomNavigation from '../components/BottomNavigation';
 
 type Props = {
   navigation: Navigation;
@@ -21,9 +21,23 @@ const playWord = (word: string) => {
   webViewRef.injectJavaScript(`window.player.play('${word}')`);
 }
 
+const useShareableState = () => {
+  const [loading, setLoading] = useState(false);
+  return {
+    loading,
+    setLoading
+  }
+}
+
 const Item = ({ text }) => {
+  const { setLoading } = useBetween(useShareableState);
   return (
-    <TouchableOpacity onPress={() => playWord(text)} style={styles.item}>
+    <TouchableOpacity
+      onPress={() => {
+        playWord(text)
+        setLoading(true)
+      }}
+      style={styles.item}>
       <Text>{text}</Text>
     </TouchableOpacity>
   );
@@ -35,6 +49,7 @@ const Dictionary = ({ route, navigation }: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const [data, setData] = useState([]);
   const [arrayholder, setArrayholder] = useState([]);
+  const { loading } = useBetween(useShareableState);
 
   const searchFunction = (text) => {
     const updatedData = arrayholder.filter((item) => {
@@ -77,6 +92,7 @@ const Dictionary = ({ route, navigation }: Props) => {
           placeholder="Pesquise aqui..."
           lightTheme
           round
+          showLoading={loading}
           value={searchValue}
           onChangeText={(text) => searchFunction(text)}
           autoCorrect={false}
@@ -88,7 +104,7 @@ const Dictionary = ({ route, navigation }: Props) => {
         />
       </View>
 
-      <BottomNavigation navigation={navigation} />
+      {/* <BottomNavigation navigation={navigation} /> */}
     </SafeAreaView>
   );
 };
@@ -107,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   description: {
-    height: '40%',
+    // height: '40%',
     marginHorizontal: 20,
     fontSize: 14,
     justifyContent: 'center',

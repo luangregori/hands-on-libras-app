@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   image: {
     marginTop: -30,
     width: '100%',
-    height: 300,
+    height: '40%',
   },
   title: {
     fontSize: 26,

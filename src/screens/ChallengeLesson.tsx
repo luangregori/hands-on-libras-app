@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image, ScrollView } from 'react-native';
 import { ProgressBar, IconButton } from 'react-native-paper';
 import { Navigation, Route } from '../types';
 import { theme } from '../core/theme';
@@ -110,7 +110,7 @@ const ChallengeLesson = ({ route, navigation }: Props) => {
           </Paragraph>
         </View>
 
-        <View style={styles.buttons}>
+        <ScrollView style={styles.buttons}>
           {options.map((question: string) => (
             <Button
               key={question.toString()}
@@ -120,7 +120,7 @@ const ChallengeLesson = ({ route, navigation }: Props) => {
               {question}
             </Button>
           ))}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
