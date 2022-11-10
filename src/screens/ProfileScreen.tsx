@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"
 import { loadUserApi, updateUserApi } from '../services/user';
 import { firebase } from '../services/firebase'
+import { Icon } from 'react-native-elements';
 
 type Props = {
   navigation: Navigation;
@@ -18,7 +19,12 @@ const Profile = ({ navigation }: Props) => {
     email: '',
     id: '',
     image_url: '',
-    achievements: [],
+    achievements: [{
+      id: '',
+      accountId: '',
+      name: '',
+      icon: ''
+    }],
   })
   const [image, setImage] = useState(null)
   const [userScore, setUserScore] = useState(0)
@@ -142,15 +148,17 @@ const Profile = ({ navigation }: Props) => {
         </View>
 
         <View style={{ alignItems: "center" }}>
+          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Conquistas</Text>
           {userInfo.achievements.map((achievement, index) => (
             <View key={index} style={styles.recentItem}>
-              {/* <View style={styles.activityIndicator}></View> */}
-              <Ionicons name="trophy" size={24} style={styles.activityIndicator} color={theme.colors.primary}></Ionicons>
-              <View style={{ width: 250 }}>
-                <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                  <Text style={{ fontWeight: "400" }}>{achievement}</Text>
-                </Text>
-              </View>
+              <Icon
+                name={achievement.icon ? achievement.icon : 'trophy'}
+                type='font-awesome'
+                size={34}
+                color={theme.colors.primary}
+                tvParallaxProperties={undefined}
+              />
+              <Text style={[styles.text, { fontWeight: "200", fontSize: 26, marginLeft: 10 }]}>{achievement.name}</Text>
             </View>
           ))}
 
@@ -229,8 +237,7 @@ const styles = StyleSheet.create({
   },
   recentItem: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    marginVertical: 16
+    justifyContent: "space-between",
   },
   activityIndicator: {
     marginTop: -3,
