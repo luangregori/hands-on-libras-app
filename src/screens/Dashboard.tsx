@@ -1,12 +1,12 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
+import { Button, } from "react-native-elements";
 import Header from '../components/Header';
 import CardChallenge from "../components/CardChallenge";
 import BottomNavigation from '../components/BottomNavigation';
 import { Navigation } from '../types';
 import { theme } from '../core/theme';
 import { loadCategoriesApi, loadLessonsApi } from '../services/lessons';
-import { IconButton } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { loadScoreApi } from '../services/score';
 
@@ -19,6 +19,7 @@ const Dashboard = ({ navigation }: Props) => {
   const [challenges, setChallenges] = useState([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
   const [score, setScore] = useState(0);
+  const [index, setIndex] = useState(0);
 
   const _getCategories = async () => {
     let allCategories = await loadCategoriesApi()
@@ -47,10 +48,15 @@ const Dashboard = ({ navigation }: Props) => {
     setScore(score)
   };
 
+  const _clickedButton = (index: number, id: string) => {
+    setIndex(index)
+    _getChallengesFromCategory(id)
+  }
+
   useEffect(() => {
     _getCategories();
     _getChallengesFromCategory();
-    
+
     const listener = navigation.addListener('focus', () => {
       _getScore();
     });
@@ -66,15 +72,37 @@ const Dashboard = ({ navigation }: Props) => {
       <View style={styles.header}>
         <Header>Desafios</Header>
         <View style={styles.categories}>
-          {categories.map((el: any) =>
-            <TouchableOpacity key={el.id} onPress={() => _getChallengesFromCategory(el.id)}>
-              <Text style={styles.category_name}>{el.name.toUpperCase()}</Text>
-            </TouchableOpacity>
+          {categories.map((el: any, indx: number) =>
+            <Button
+              title={el.name}
+              type={index === indx ? "outline" : "clear"}
+              titleStyle={{ fontWeight: '600', color: theme.colors.primary, }}
+              onPress={() => _clickedButton(indx, el.id)}
+              buttonStyle={{
+                borderColor: theme.colors.primary,
+
+              }}
+            />
           )}
-          <TouchableOpacity style={styles.categories} onPress={() => { navigation.navigate('Ranking') }}>
-            <IconButton style={{ margin: -17 }} size={30} icon="star" color={theme.colors.contrast} />
-            <Text style={styles.points}>{score}</Text>
-          </TouchableOpacity>
+          <Button
+            title={score.toString()}
+            icon={{
+              name: 'star',
+              type: 'font-awesome',
+              size: 15,
+              color: 'white',
+            }}
+            type="clear"
+            iconContainerStyle={{ marginRight: 10 }}
+            titleStyle={{ fontWeight: '700', color: 'white' }}
+            buttonStyle={{
+              backgroundColor: theme.colors.primary,
+              borderColor: 'transparent',
+              borderWidth: 0,
+              borderRadius: 30,
+            }}
+            onPress={() => { navigation.navigate('Ranking') }}
+          />
         </View>
       </View>
 

@@ -62,11 +62,11 @@ const LearnLesson = ({ route, navigation }: Props) => {
   if (!completed) {
     return (
       <SafeAreaView style={styles.container}>
-  
+
         <StatusBar backgroundColor={theme.colors.backdrop} />
-  
+
         <BackButton goBack={() => navigation.navigate('Dashboard')} />
-  
+
         <View style={styles.avatar}>
           <WebView
             style={{ marginLeft: "-50%" }}
@@ -80,13 +80,13 @@ const LearnLesson = ({ route, navigation }: Props) => {
             source={{ uri: 'https://hands-on-libras.web.app/?cc=true' }}
           />
         </View>
-  
+
         <View style={styles.description}>
           <Paragraph>
             {learningInfo.find(val => val.id === stepId)?.description}
           </Paragraph>
         </View>
-  
+
         <View style={styles.buttons}>
           {_hasNextStep() ?
             <Button mode="contained" onPress={_nextStep}>
@@ -102,12 +102,12 @@ const LearnLesson = ({ route, navigation }: Props) => {
       </SafeAreaView>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={theme.colors.backdrop} />
       <View style={styles.content}>
-        <Image style={styles.image} source={require('../assets/learn-completed-successfully.png')}/>
+        <Image style={styles.image} source={require('../assets/learn-completed-successfully.png')} />
         <Paragraph>
           Aprendizado concluído com sucesso!!
         </Paragraph>
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttons: {
-    marginTop: 10,
     marginHorizontal: 20,
     paddingLeft: '50%',
   },
