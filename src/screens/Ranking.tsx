@@ -1,5 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, SafeAreaView, StatusBar, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar, ActivityIndicator, ScrollView } from 'react-native';
+import { Button, } from "react-native-elements";
 import Header from '../components/Header';
 import BottomNavigation from '../components/BottomNavigation';
 import { Navigation } from '../types';
@@ -15,6 +16,7 @@ type Props = {
 const Ranking = ({ navigation }: Props) => {
   const [ranking, setRanking] = useState([{ position: 0, name: '', score: 0 }]);
   const [loadingRanking, setLoadingRanking] = useState(false);
+  const [index, setIndex] = useState(0);
 
   const ranges = [{ name: 'semanal', days: 7 }, { name: 'mensal', days: 30 }, { name: 'anual', days: 365 }]
 
@@ -29,6 +31,11 @@ const Ranking = ({ navigation }: Props) => {
     setLoadingRanking(false);
   };
 
+  const _clickedButton = (index: number, days: number) => {
+    setIndex(index)
+    _getRanking(days)
+  }
+
   useEffect(() => {
     _getRanking(7);
   }, []);
@@ -40,21 +47,26 @@ const Ranking = ({ navigation }: Props) => {
       <View style={styles.header}>
         <Header>Classificação</Header>
         <View style={styles.ranges}>
-          {ranges.map((el: any) =>
+          {/* {ranges.map((el: any) =>
             <TouchableOpacity key={el.days} onPress={() => { _getRanking(el.days) }}>
               <Text style={styles.name}>{el.name.toUpperCase()}</Text>
             </TouchableOpacity>
+          )} */}
+          {ranges.map((el: any, indx: number) =>
+            <Button
+              title={el.name.toUpperCase()}
+              type={index === indx ? "outline" : "clear"}
+              titleStyle={{ fontWeight: '600', color: theme.colors.primary, }}
+              onPress={() => _clickedButton(indx, el.days)}
+              buttonStyle={{
+                borderColor: theme.colors.primary,
+
+              }}
+            />
           )}
         </View>
       </View>
 
-      {/* <ScrollView style={styles.ranking}>
-        {loadingRanking ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loadingRanking} />
-        ) : (
-          <RankingElement items={ranking} />
-        )}
-      </ScrollView> */}
       <View style={styles.ranking}>
         <Text style={styles.title}>Placar Geral</Text>
         <Leaderboard
