@@ -76,11 +76,12 @@ const Dashboard = ({ navigation }: Props) => {
             <Button
               title={el.name}
               type={index === indx ? "outline" : "clear"}
-              titleStyle={{ fontWeight: '600', color: theme.colors.primary, }}
+              titleStyle={{ fontWeight: '600', color: index === indx ? theme.colors.placeholder : theme.colors.primary }}
               onPress={() => _clickedButton(indx, el.id)}
               buttonStyle={{
                 borderColor: theme.colors.primary,
-
+                backgroundColor: index === indx ? theme.colors.primary : null,
+                borderRadius: 30
               }}
             />
           )}
@@ -96,7 +97,7 @@ const Dashboard = ({ navigation }: Props) => {
             iconContainerStyle={{ marginRight: 10 }}
             titleStyle={{ fontWeight: '700', color: 'white' }}
             buttonStyle={{
-              backgroundColor: theme.colors.primary,
+              backgroundColor: theme.colors.contrast,
               borderColor: 'transparent',
               borderWidth: 0,
               borderRadius: 30,
