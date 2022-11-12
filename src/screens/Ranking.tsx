@@ -25,7 +25,7 @@ const Ranking = ({ navigation }: Props) => {
 
     let loadedRanking = await loadRankingApi(days)
 
-    loadedRanking = loadedRanking.map(el => Object.assign(el, { image_url: "https://firebasestorage.googleapis.com/v0/b/hands-on-libras.appspot.com/o/accounts%2F62d01c57b0d4f50016d50207%2Fprofile.png?alt=media&token=0f9a7df8-35f4-4e6c-908b-60c34839aacd" }))
+    loadedRanking = loadedRanking.map(el => el.image_url ? el : Object.assign(el, { image_url: "https://firebasestorage.googleapis.com/v0/b/hands-on-libras.appspot.com/o/accounts%2Fprofile.png?alt=media&token=4e06bf47-a985-43ad-ab04-08d5ee32f7d9" }))
 
     setRanking(loadedRanking)
     setLoadingRanking(false);
@@ -47,20 +47,15 @@ const Ranking = ({ navigation }: Props) => {
       <View style={styles.header}>
         <Header>Classificação</Header>
         <View style={styles.ranges}>
-          {/* {ranges.map((el: any) =>
-            <TouchableOpacity key={el.days} onPress={() => { _getRanking(el.days) }}>
-              <Text style={styles.name}>{el.name.toUpperCase()}</Text>
-            </TouchableOpacity>
-          )} */}
           {ranges.map((el: any, indx: number) =>
             <Button
               title={el.name.toUpperCase()}
-              type={index === indx ? "outline" : "clear"}
-              titleStyle={{ fontWeight: '600', color: theme.colors.primary, }}
+              type={index === indx ? "solid" : "clear"}
+              titleStyle={{ fontWeight: '600', color: index === indx ? theme.colors.placeholder : theme.colors.primary }}
               onPress={() => _clickedButton(indx, el.days)}
               buttonStyle={{
                 borderColor: theme.colors.primary,
-
+                backgroundColor: index === indx ? theme.colors.primary : null,
               }}
             />
           )}
@@ -68,12 +63,16 @@ const Ranking = ({ navigation }: Props) => {
       </View>
 
       <View style={styles.ranking}>
-        <Text style={styles.title}>Placar Geral</Text>
-        <Leaderboard
-          data={ranking}
-          sortBy='score'
-          labelBy='name'
-          icon='image_url' />
+        <Text style={styles.title}>Placar</Text>
+        {loadingRanking ? (
+          <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginVertical: 10 }} />
+        ) :
+          <Leaderboard
+            data={ranking}
+            sortBy='score'
+            labelBy='name'
+            icon='image_url' />
+        }
       </View>
 
       <BottomNavigation navigation={navigation} />
