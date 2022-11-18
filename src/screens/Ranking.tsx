@@ -50,6 +50,7 @@ const Ranking = ({ navigation }: Props) => {
           {ranges.map((el: any, indx: number) =>
             <Button
               title={el.name.toUpperCase()}
+              key={indx}
               type={index === indx ? "solid" : "clear"}
               titleStyle={{ fontWeight: '600', color: index === indx ? theme.colors.placeholder : theme.colors.primary }}
               onPress={() => _clickedButton(indx, el.days)}

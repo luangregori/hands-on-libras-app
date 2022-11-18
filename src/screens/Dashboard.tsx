@@ -75,6 +75,7 @@ const Dashboard = ({ navigation }: Props) => {
           {categories.map((el: any, indx: number) =>
             <Button
               title={el.name}
+              key={indx}
               type={index === indx ? "outline" : "clear"}
               titleStyle={{ fontWeight: '600', color: index === indx ? theme.colors.placeholder : theme.colors.primary }}
               onPress={() => _clickedButton(indx, el.id)}

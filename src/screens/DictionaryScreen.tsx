@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, StatusBar, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, SafeAreaView, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
 import BackButton from '../components/BackButton';
 import { Navigation, Route } from '../types';
@@ -49,7 +49,7 @@ const Dictionary = ({ route, navigation }: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const [data, setData] = useState([]);
   const [arrayholder, setArrayholder] = useState([]);
-  const { loading } = useBetween(useShareableState);
+  const { loading, setLoading } = useBetween(useShareableState);
 
   const searchFunction = (text) => {
     const updatedData = arrayholder.filter((item) => {
@@ -65,6 +65,7 @@ const Dictionary = ({ route, navigation }: Props) => {
     setArrayholder(words)
     setData(words)
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -77,9 +78,11 @@ const Dictionary = ({ route, navigation }: Props) => {
           style={{ marginLeft: "-50%" }}
           width={'200%'}
           onMessage={(event) => {
-            if (event.nativeEvent.data === "PLAYER_LOADED") {
-              console.log("PLAYER_LOADED");
-              // playWord(learningInfo.find(val => val.id === stepId)?.word)
+            if (event.nativeEvent.data === "GLOSSA_LOADED") {
+              console.log("event GLOSSA_LOADED");
+              setTimeout(() => {
+                setLoading(false)
+              }, 2);
             }
           }}
           ref={(ref) => webViewRef = ref}
@@ -88,15 +91,19 @@ const Dictionary = ({ route, navigation }: Props) => {
       </View>
 
       <View style={styles.description}>
-        <SearchBar
-          placeholder="Pesquise aqui..."
-          lightTheme
-          round
-          showLoading={loading}
-          value={searchValue}
-          onChangeText={(text) => searchFunction(text)}
-          autoCorrect={false}
-        />
+
+        {loading ? (
+          <ActivityIndicator size="large" color={theme.colors.primary} style={{ margin: 15 }} />
+        ) : (
+          <SearchBar
+            placeholder="Pesquise aqui..."
+            lightTheme
+            round
+            value={searchValue}
+            onChangeText={(text) => searchFunction(text)}
+            autoCorrect={false}
+          />
+        )}
         <FlatList
           data={data}
           renderItem={renderItem}
