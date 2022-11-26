@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { emailValidator } from '../core/utils';
 import Background from '../components/Background';
 import BackButton from '../components/BackButton';
@@ -9,6 +9,7 @@ import TextInput from '../components/TextInput';
 import { theme } from '../core/theme';
 import Button from '../components/Button';
 import { Navigation } from '../types';
+import { recoverPasswordApi } from '../services/user';
 
 type Props = {
   navigation: Navigation;
@@ -16,8 +17,10 @@ type Props = {
 
 const ForgotPasswordScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
+  const [loading, setLoading] = useState(false);
 
-  const _onSendPressed = () => {
+  const _onSendPressed = async () => {
+    setLoading(true);
     const emailError = emailValidator(email.value);
 
     if (emailError) {
@@ -25,7 +28,11 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
       return;
     }
 
-    navigation.navigate('LoginScreen');
+    const status = await recoverPasswordApi(email.value)
+    if (status.success) {
+      navigation.navigate('VerifyCodeScreen', { email: email.value });
+    }
+    setLoading(false);
   };
 
   return (
@@ -48,21 +55,31 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
         keyboardType="email-address"
       />
 
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      ) : null}
+
       <Button mode="contained" onPress={_onSendPressed} style={styles.button}>
         Enviar
       </Button>
 
-      <TouchableOpacity
-        style={styles.back}
-        onPress={() => navigation.navigate('LoginScreen')}
-      >
-        <Text style={styles.label}>← Voltar ao login</Text>
-      </TouchableOpacity>
+      <View style={styles.backToLogin}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('LoginScreen')}
+        >
+          <Text style={styles.label}>← Voltar ao login</Text>
+        </TouchableOpacity>
+      </View>
     </Background>
   );
 };
 
 const styles = StyleSheet.create({
+  backToLogin: {
+    width: '100%',
+    alignItems: 'flex-end',
+    marginBottom: 24,
+  },
   back: {
     width: '100%',
     marginTop: 12,

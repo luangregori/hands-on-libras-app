@@ -131,7 +131,6 @@ const Profile = ({ navigation }: Props) => {
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            {/* // TODO: buscar classificação atual */}
             <Text style={[styles.text, { fontSize: 24 }]}>{userRank}°</Text>
             <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>

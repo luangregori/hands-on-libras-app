@@ -109,7 +109,7 @@ const RegisterScreen = ({ navigation }: Props) => {
       />
 
       <TextInput
-        label="Confime sua senha"
+        label="Confirme sua senha"
         returnKeyType="done"
         value={passwordConfirmation.value}
         onChangeText={text => setPasswordConfirmation({ value: text, error: '' })}

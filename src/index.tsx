@@ -13,7 +13,9 @@ import {
   Profile,
   LearnLesson,
   ChallengeLesson,
-  Dictionary
+  Dictionary,
+  VerifyCodeScreen,
+  NewPasswordScreen
 } from './screens';
 
 const Stack = createNativeStackNavigator();
@@ -33,6 +35,8 @@ const App = () => {
         <Stack.Screen name="LearnLesson" component={LearnLesson} />
         <Stack.Screen name="ChallengeLesson" component={ChallengeLesson} />
         <Stack.Screen name="Dictionary" component={Dictionary} />
+        <Stack.Screen name="VerifyCodeScreen" component={VerifyCodeScreen} />
+        <Stack.Screen name="NewPasswordScreen" component={NewPasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
