@@ -25,6 +25,14 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": ""
+    "description": "",
+    "extra": {
+      "eas": {
+        "projectId": "2119a273-696c-4ceb-864c-0a7c76560dc8"
+      }
+    },
+    "android": {
+      "package": "com.luangregori.handsonlibrasap"
+    }
   }
 }

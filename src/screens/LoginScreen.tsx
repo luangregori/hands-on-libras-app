@@ -47,6 +47,7 @@ const LoginScreen = ({ navigation }: Props) => {
 
       navigation.navigate('Dashboard');
     } else {
+      setLoading(false)
       setPassword({ ...password, error: messages.wrongLogin });
     }
   };

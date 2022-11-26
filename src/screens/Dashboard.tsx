@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
-import { StyleSheet, View, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
-import { Button, } from "react-native-elements";
+import { StyleSheet, View, StatusBar, SafeAreaView, ActivityIndicator, Text } from 'react-native';
+import { Button, Dialog, } from "react-native-elements";
 import Header from '../components/Header';
 import CardChallenge from "../components/CardChallenge";
 import BottomNavigation from '../components/BottomNavigation';
@@ -9,6 +9,7 @@ import { theme } from '../core/theme';
 import { loadCategoriesApi, loadLessonsApi } from '../services/lessons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { loadScoreApi } from '../services/score';
+import { loadUserApi } from '../services/user';
 
 type Props = {
   navigation: Navigation;
@@ -20,6 +21,20 @@ const Dashboard = ({ navigation }: Props) => {
   const [loadingChallenges, setLoadingChallenges] = useState(false);
   const [score, setScore] = useState(0);
   const [index, setIndex] = useState(0);
+  const [visibleDialog, setVisibleDialog] = useState(false);
+
+  const _toggleDialog = () => {
+    setVisibleDialog(!visibleDialog);
+  };
+
+  const _setVerifiedEmail = async () => {
+    let infos = await loadUserApi()
+
+    if (infos) {
+      const verified = infos.userInfo?.email_verified
+      setVisibleDialog(!verified)
+    }
+  }
 
   const _getCategories = async () => {
     let allCategories = await loadCategoriesApi()
@@ -56,6 +71,7 @@ const Dashboard = ({ navigation }: Props) => {
   useEffect(() => {
     _getCategories();
     _getChallengesFromCategory();
+    _setVerifiedEmail();
 
     const listener = navigation.addListener('focus', () => {
       _getScore();
@@ -75,12 +91,14 @@ const Dashboard = ({ navigation }: Props) => {
           {categories.map((el: any, indx: number) =>
             <Button
               title={el.name}
+              key={indx}
               type={index === indx ? "outline" : "clear"}
-              titleStyle={{ fontWeight: '600', color: theme.colors.primary, }}
+              titleStyle={{ fontWeight: '600', color: index === indx ? theme.colors.placeholder : theme.colors.primary }}
               onPress={() => _clickedButton(indx, el.id)}
               buttonStyle={{
                 borderColor: theme.colors.primary,
-
+                backgroundColor: index === indx ? theme.colors.primary : null,
+                borderRadius: 30
               }}
             />
           )}
@@ -96,7 +114,7 @@ const Dashboard = ({ navigation }: Props) => {
             iconContainerStyle={{ marginRight: 10 }}
             titleStyle={{ fontWeight: '700', color: 'white' }}
             buttonStyle={{
-              backgroundColor: theme.colors.primary,
+              backgroundColor: theme.colors.contrast,
               borderColor: 'transparent',
               borderWidth: 0,
               borderRadius: 30,
@@ -105,6 +123,14 @@ const Dashboard = ({ navigation }: Props) => {
           />
         </View>
       </View>
+
+      <Dialog
+        isVisible={visibleDialog}
+        onBackdropPress={_toggleDialog}
+      >
+        <Dialog.Title title="Verifique seu Email" />
+        <Text>Para garantir que você nunca perca acesso a sua conta, verifique seu email. De uma olhada na caixa de spam, talvez ele esteja lá 😉</Text>
+      </Dialog>
 
       <ScrollView style={styles.challenges}>
         {loadingChallenges ? (

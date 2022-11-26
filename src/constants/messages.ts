@@ -10,4 +10,5 @@ export const messages = {
 	insertPassword: 'Favor inserir uma senha.',
 	userNotFound: 'Esta conta não existe.',
 	emailVerification: `Para concluir o cadastro, basta fazer a verificação de e-mail e ir para o login! Não esqueça de verificar no Spam.`,
+	wrongCode: `Código não confere!`
 }
