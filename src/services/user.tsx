@@ -46,7 +46,7 @@ export async function loadUserApi() {
 
 export async function updateUserApi(params: { name?: string, email?: string, newPassword?: string, oldPassword?: string, image_url?: string }) {
 	try {
-		console.log('Update user info...', params.image_url);
+		console.log('Update user info...', { params });
 		const response = await api.post('/api/update-user-info', params);
 		console.log('User Info updated successfully!');
 		return response.data;

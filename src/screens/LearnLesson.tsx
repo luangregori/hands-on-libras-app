@@ -9,6 +9,7 @@ import Paragraph from '../components/Paragraph';
 
 import { WebView } from 'react-native-webview';
 
+
 type Props = {
   navigation: Navigation;
   route: Route;
@@ -69,7 +70,7 @@ const LearnLesson = ({ route, navigation }: Props) => {
 
         <View style={styles.avatar}>
           <WebView
-            style={{ marginLeft: "-50%" }}
+            style={styles.webview}
             width={'200%'}
             onMessage={(event) => {
               if (event.nativeEvent.data === "PLAYER_LOADED") {
@@ -129,15 +130,16 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     backgroundColor: theme.colors.background,
   },
+  webview: {
+    marginLeft: "-50%",
+  },
   avatar: {
     height: '50%',
     marginHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'red',
   },
   description: {
-    height: '40%',
     marginHorizontal: 20,
     fontSize: 14,
     justifyContent: 'center',

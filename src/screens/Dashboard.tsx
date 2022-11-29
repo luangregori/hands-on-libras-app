@@ -10,6 +10,7 @@ import { loadCategoriesApi, loadLessonsApi } from '../services/lessons';
 import { ScrollView } from 'react-native-gesture-handler';
 import { loadScoreApi } from '../services/score';
 import { loadUserApi } from '../services/user';
+import { messages } from '../constants';
 
 type Props = {
   navigation: Navigation;
@@ -129,7 +130,7 @@ const Dashboard = ({ navigation }: Props) => {
         onBackdropPress={_toggleDialog}
       >
         <Dialog.Title title="Verifique seu Email" />
-        <Text>Para garantir que você nunca perca acesso a sua conta, verifique seu email. De uma olhada na caixa de spam, talvez ele esteja lá 😉</Text>
+        <Text>{messages.emailVerification}</Text>
       </Dialog>
 
       <ScrollView style={styles.challenges}>
