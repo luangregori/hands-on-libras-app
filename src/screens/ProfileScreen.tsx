@@ -4,9 +4,8 @@ import { Navigation } from '../types';
 import { theme } from '../core/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker"
-import { loadUserApi, updateUserApi } from '../services/user';
-import { firebase } from '../services/firebase'
+import { loadUserApi } from '../services/user';
+import Button from '../components/Button';
 import { Icon } from 'react-native-elements';
 
 type Props = {
@@ -28,7 +27,7 @@ const Profile = ({ navigation }: Props) => {
   })
   const [image, setImage] = useState(null)
   const [userScore, setUserScore] = useState(0)
-  const [userRank, setUserRank] = useState('X')
+  const [userRank, setUserRank] = useState('')
   const [uploading, setUploading] = useState(false)
 
   const _loadUserInfo = async () => {
@@ -51,59 +50,13 @@ const Profile = ({ navigation }: Props) => {
     navigation.navigate('HomeScreen');
   }
 
-  const updateImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    }) as any;
-
-    if (!result.cancelled) {
-      const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-          resolve(xhr.response);
-        };
-        xhr.onerror = function () {
-          reject(new TypeError('Network request failed'));
-        };
-        xhr.responseType = 'blob';
-        xhr.open('GET', result.uri, true);
-        xhr.send(null);
-      }) as any;
-      console.log('blob', blob)
-
-      const ref = firebase.storage().ref().child(`/accounts/${userInfo.id}/profile.png`);
-      const snapshot = ref.put(blob)
-
-      snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
-        () => {
-          setUploading(true)
-        },
-        (error) => {
-          setUploading(false)
-          console.log('error', error)
-          blob.close()
-          return
-        },
-        () => {
-          snapshot.snapshot.ref.getDownloadURL().then((url) => {
-            setUploading(false)
-            console.log("Download URL: ", url)
-            setImage(result.uri)
-            updateUserApi({ image_url: url })
-            blob.close()
-            return url
-          })
-        }
-      )
-    }
-  }
-
   useEffect(() => {
-    _loadUserInfo();
-  }, []);
+    const listener = navigation.addListener('focus', () => {
+      _loadUserInfo();
+    });
 
+    return listener;
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,19 +72,15 @@ const Profile = ({ navigation }: Props) => {
               <Image source={require("../assets/profile.png")} style={styles.image} resizeMode="center"></Image>
             }
           </View>
-
-          <TouchableOpacity style={styles.add} onPress={updateImage}>
-            {uploading ?
-              <ActivityIndicator size="large" color={theme.colors.primary} /> :
-              <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ marginTop: 6, marginLeft: 2 }}></Ionicons>
-            }
-          </TouchableOpacity>
         </View>
 
+        <View style={styles.infoContainer}>
+          <Text style={[styles.text, { fontWeight: "400", fontSize: 28 }]}>{userInfo.name}</Text>
+        </View>
 
         <View style={styles.statsContainer}>
           <View style={styles.statsBox}>
-            <Text style={[styles.text, { fontSize: 24 }]}>{userRank}°</Text>
+            <Text style={[styles.text, { fontSize: 24 }]}>{userRank ? `${userRank}°` : 'N/A'}</Text>
             <Text style={[styles.text, styles.subText]}>Classificação</Text>
           </View>
           <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
@@ -139,11 +88,12 @@ const Profile = ({ navigation }: Props) => {
             <Text style={[styles.text, styles.subText]}>Pontuação</Text>
           </View>
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Nome</Text>
-          <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{userInfo.name}</Text>
-          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Email</Text>
-          <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{userInfo.email}</Text>
+
+
+        <View style={{ marginHorizontal: '25%', marginBottom: 24 }}>
+          <Button mode="outlined" onPress={() => navigation.navigate('EditProfileScreen', { infos: userInfo })}>
+            Editar perfil
+          </Button>
         </View>
 
         <View style={{ alignItems: "center" }}>
@@ -217,12 +167,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     marginTop: 16,
-    marginBottom: 32
   },
   statsContainer: {
     flexDirection: "row",
     alignSelf: "center",
-    marginTop: 32
+    marginTop: 24
   },
   statsBox: {
     alignItems: "center",
