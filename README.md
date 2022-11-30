@@ -1,16 +1,13 @@
-# React Native Paper Login Template
+# Hands On Libras
 
-The easiest way to start with your application.
+The easiest way to learn Libras.
 
 ## Features
 
-- Save energy & hours of hard-work
-- Complete source code in React Native
-- Based on [**react-native-paper**](https://reactnativepaper.com/)
-- 5 screens & 16 components
-- Prettier for pretty, formatted code
-- Minimum dependencies
-
+- Learn about a specific area;
+- Do challenges to prove knowledge;
+- Receive rewards after completing courses;
+- Translate any word contained in the dictionary;
 ## How to use?
 
 1. Download or clone this repo.
@@ -26,9 +23,9 @@ yarn install
 3. Run project on iOS / Android.
 
 ```js
- npm run ios // npm run android
+ npm run android // npm run ios
  // or
- yarn ios // yarn android
+ yarn android // yarn ios
 ```
 
 Project was created using [Expo](https://expo.io/). If you want standard native project please run following command:
@@ -37,14 +34,12 @@ Project was created using [Expo](https://expo.io/). If you want standard native 
 expo eject
 ```
 
-## Preview
+<!-- ## Preview
 
 ![homescreen](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/homescreen.png)
 ![login](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/login.png)
 ![register](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/register.png)
 ![forgot](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/forgot.png)
-![dashboard](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/dashboard.png)
+![dashboard](https://raw.githubusercontent.com/callstack/react-native-paper-login-template/master/preview/dashboard.png) -->
 
-## Made with ❤️ at Callstack
-
-This template is an open source project and will always remain free to use. If you think it's cool, please star it 🌟. Callstack is a group of React and React Native geeks, contact us at hello@callstack.com if you need any help with these or just want to say hi!
+## Made by [Luan de Gregori](https://github.com/luangregori) 
