@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Card, IconButton } from 'react-native-paper';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { theme } from '../core/theme';
 import { Navigation } from '../types';
 
@@ -12,27 +12,28 @@ type Props = {
   subtitle: string
 };
 
-const CardChallenge = ({ navigation, uri, id, title, subtitle  }: Props) => {
-  const _goToStart = ()=> {
+const CardChallenge = ({ navigation, uri, id, title, subtitle }: Props) => {
+  const _goToStart = () => {
     console.log('go to start', id)
     navigation.navigate('StartLesson', { lessonId: id })
   }
   return (
-    <Card.Title
-      style={styles.card}
-      title={title}
-      subtitle={subtitle}
-      leftStyle={styles.left}
-      titleNumberOfLines={2}
-      // left={(props) => <Avatar.Image {...props} source={{uri}}/>}
-      left={(props) =><Image style={styles.image} source={{uri}}/>}
-      right={(props) => <IconButton {...props} icon="arrow-right" onPress={() => {_goToStart()}} />}
-    />
+    <TouchableOpacity onPress={_goToStart}>
+      <Card.Title
+        style={styles.card}
+        title={title}
+        subtitle={subtitle}
+        leftStyle={styles.left}
+        titleNumberOfLines={2}
+        left={(props) => <Image style={styles.image} source={{ uri }} />}
+        right={(props) => <IconButton {...props} icon="arrow-right" onPress={_goToStart} />}
+      />
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card:{
+  card: {
     borderRadius: 6,
     elevation: 3,
     shadowOffset: { width: 1, height: 1 },
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     margin: 5
   },
-  left:{
+  left: {
     width: 75,
     height: 60
   },
