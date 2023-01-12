@@ -3,7 +3,7 @@ import api from './httpConfig';
 export async function loadScoreApi() {
 	try {
 		console.log('Loading Score...');
-		const response = await api.post('/api/score');
+		const response = await api.post('users/score');
 		console.log('Score loaded successfully!'), response.data;
 		return response.data
 
